@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление сотрудниками</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-card-hover: rgba(255, 255, 255, 0.06);
+            --accent-primary: #00d4ff;
+            --accent-secondary: #7c3aed;
+            --accent-gradient: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-orange: #f59e0b;
+            --text-primary: #f0f0f5;
+            --text-secondary: #8888a0;
+            --border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans', sans-serif;
+            min-height: 100vh;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(0, 212, 255, 0.3);
+            color: var(--accent-primary);
+        }
+
+        .back-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--accent-gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .logo h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+        }
+
+        .user-info,
+        .header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .username {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .username span {
+            color: var(--accent-primary);
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .logout-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 50px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-title-group {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .page-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.2) 0%, rgba(124, 58, 237, 0.05) 100%);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-icon svg {
+            width: 30px;
+            height: 30px;
+            fill: #a78bfa;
+        }
+
+        .page-title h2 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .page-title h2 span {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-title p {
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            background: var(--accent-gradient);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-primary svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        /* Table Container - как в my_requests.html */
+        .table-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease;
+            animation-delay: 0.2s;
+            animation-fill-mode: both;
+        }
+
+        /* Table - как в my_requests.html */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: rgba(0, 212, 255, 0.05);
+            padding: 16px 20px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background: var(--bg-card-hover);
+        }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: var(--accent-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+            color: white;
+        }
+
+        .user-cell .user-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .user-name {
+            font-weight: 500;
+        }
+
+        .user-username {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .id-cell {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .role-badge.admin {
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.2) 0%, rgba(124, 58, 237, 0.1) 100%);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            color: #a78bfa;
+        }
+
+        .role-badge.manager {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.1) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #fbbf24;
+        }
+
+        .role-badge.employee {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+        }
+
+        .role-badge.user, .role-badge.none {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .actions-cell {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-action svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        .btn-edit {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #fbbf24;
+        }
+
+        .btn-edit:hover {
+            background: rgba(245, 158, 11, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        .btn-delete:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Empty State */
+        .empty-state {
+            padding: 80px 30px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .empty-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: var(--text-secondary);
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        /* Footer */
+        .table-footer {
+            padding: 20px 30px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            gap: 12px;
+        }
+
+        .back-link svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .filter-select option {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        /* Filter Bar - аналогично my_requests.html */
+        .filter-bar {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-group label {
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .filter-input {
+            padding: 10px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 13px;
+            font-family: 'IBM Plex Sans', sans-serif;
+            min-width: 180px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-input:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .filter-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .filter-select {
+            padding: 10px 36px 10px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 13px;
+            font-family: 'IBM Plex Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 150px;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%238888a0'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 12px;
+        }
+
+        .filter-select:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .filter-select option {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 10px;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: var(--accent-gradient);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: 'IBM Plex Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .reset-btn {
+            padding: 10px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            font-family: 'IBM Plex Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .reset-btn:hover {
+            color: var(--text-primary);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        @media (max-width: 1024px) {
+            .header {
+                padding: 18px 24px;
+            }
+
+            .main {
+                padding: 36px 24px;
+            }
+
+            .page-header {
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+                padding: 16px 18px;
+            }
+
+            .header-left,
+            .header .user-info {
+                width: 100%;
+                justify-content: space-between;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+
+            .main {
+                padding: 28px 18px;
+            }
+
+            .page-header,
+            .page-title-group,
+            .filter-bar,
+            .filter-group,
+            .table-footer,
+            .actions-cell {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .page-header {
+                margin-bottom: 28px;
+            }
+
+            .page-title h2 {
+                font-size: 26px;
+            }
+
+            .btn-primary,
+            .filter-input,
+            .filter-select,
+            .filter-btn,
+            .reset-btn {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 860px;
+            }
+
+            .actions-cell {
+                gap: 8px;
+            }
+
+            .btn-action {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                gap: 12px;
+            }
+
+            .logo-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .logo h1 {
+                font-size: 16px;
+            }
+
+            .username {
+                width: 100%;
+            }
+
+            .logout-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .page-title h2 {
+                font-size: 24px;
+            }
+
+            .page-title p {
+                font-size: 14px;
+            }
+
+            .page-icon {
+                width: 52px;
+                height: 52px;
+            }
+
+            .page-icon svg {
+                width: 26px;
+                height: 26px;
+            }
+
+            th,
+            td {
+                padding: 14px 16px;
+            }
+
+            .user-cell {
+                gap: 12px;
+            }
+
+            .user-avatar {
+                width: 38px;
+                height: 38px;
+                border-radius: 10px;
+                font-size: 14px;
+            }
+        }
+    </style>
+    {% include 'theme_head.html' %}
+</head>
+<body>
+    {% with header_back_url='home' %}
+    {% include 'includes/global_header.html' %}
+    {% endwith %}
+
+    <main class="main">
+        {% if messages %}
+        <div style="display: grid; gap: 12px; margin-bottom: 24px; animation: fadeInUp 0.4s ease;">
+            {% for message in messages %}
+            <div style="padding: 14px 18px; border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.35); background: rgba(239, 68, 68, 0.12); color: #fca5a5; font-size: 14px; font-weight: 500;">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="page-header">
+            <div class="page-title-group">
+                <div class="page-title">
+                    <h2>Управление <span>сотрудниками</span></h2>
+                    <p>Просмотр, добавление, редактирование и удаление пользователей</p>
+                </div>
+            </div>
+            {% if can_manage_employees %}
+            <a href="{% url 'employee_add' %}" class="btn-primary">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                </svg>
+                Добавить сотрудника
+            </a>
+            {% endif %}
+        </div>
+
+        <form method="get" class="filter-bar">
+            <div class="filter-group">
+                <label for="q">Поиск:</label>
+                <input type="text" name="q" id="q" value="{{ request.GET.q|default:'' }}" placeholder="Имя, логин, Email" class="filter-input" style="padding: 10px 16px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; color: var(--text-primary); font-size: 13px; font-family: inherit; min-width: 180px; transition: all 0.3s ease;">
+            </div>
+            <div class="filter-group">
+                <label for="role">Группа:</label>
+                <select name="role" id="role" class="filter-select">
+                    <option value="">Все группы</option>
+                    {% for role in roles %}
+                    <option value="{{ role.id }}" {% if request.GET.role|add:'0' == role.id %}selected{% endif %}>
+                        {{ role.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="filter-btn">Поиск</button>
+            <a href="{% url 'employees' %}" class="reset-btn">Сбросить</a>
+        </form>
+
+        <div class="table-container">
+            {% if users_with_permissions %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Сотрудник</th>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Группа</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in users_with_permissions %}
+                    {% with user=item.user %}
+                    <tr>
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar">{{ user.first_name|default:user.username|slice:":1"|upper }}</div>
+                                <div class="user-info">
+                                    <span class="user-name">{{ user.first_name|default:"-" }} {{ user.last_name|default:"" }}</span>
+                                    <span class="user-username">@{{ user.username }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="id-cell">#{{ user.id }}</td>
+                        <td>{{ user.email|default:"-" }}</td>
+                        <td>
+                            {% with group_name=user.groups.all|first %}
+                            {% if group_name %}
+                            <span class="role-badge {{ item.role_badge_class }}">{{ group_name.name }}</span>
+                            {% else %}
+                            <span class="role-badge none">Без группы</span>
+                            {% endif %}
+                            {% endwith %}
+                        </td>
+                        <td>
+                            <div class="actions-cell">
+                                {% if item.can_edit %}
+                                <a href="{% url 'employee_edit' user.pk %}" class="btn-action btn-edit">
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                                    </svg>
+                                    Редактировать
+                                </a>
+                                <form action="{% url 'employee_delete' user.pk %}" method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-action btn-delete" onclick="return confirm('Удалить сотрудника?')">
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                        </svg>
+                                        Удалить
+                                    </button>
+                                </form>
+                                {% else %}
+                                <span style="color: var(--text-secondary); font-size: 12px; font-style: italic;">Нет доступа</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endwith %}
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                                    </svg>
+                                </div>
+                                <h3>Сотрудники не найдены</h3>
+                                <p>Начните с добавления первого сотрудника в систему</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+
+        </div>
+    </main>
+    {% include 'theme_script.html' %}
+</body>
+</html>

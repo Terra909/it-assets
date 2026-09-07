@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Assets - Управление активами</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-card-hover: rgba(255, 255, 255, 0.06);
+            --accent-primary: #00d4ff;
+            --accent-secondary: #7c3aed;
+            --accent-gradient: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --text-primary: #f0f0f5;
+            --text-secondary: #8888a0;
+            --border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans', sans-serif;
+            min-height: 100vh;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(0, 212, 255, 0.3);
+            color: var(--accent-primary);
+        }
+
+        .back-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--accent-gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .logo h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+        }
+
+        .user-info,
+        .header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .username {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .username span {
+            color: var(--accent-primary);
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .logout-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 50px;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-header h2 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .page-header h2 span {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-group label {
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .filter-select {
+            padding: 10px 36px 10px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 13px;
+            font-family: 'IBM Plex Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 150px;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%238888a0'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 12px;
+        }
+
+        .filter-select:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .filter-select option {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 10px;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: var(--accent-gradient);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: 'IBM Plex Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .reset-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            font-family: 'IBM Plex Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .reset-btn:hover {
+            color: var(--text-primary);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        .add-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: var(--accent-gradient);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-left: auto;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .add-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        /* Results counter */
+        .results-counter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--accent-green);
+            margin-bottom: 20px;
+        }
+
+        .results-counter svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--accent-green);
+        }
+
+        .message-list {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 24px;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        .message-alert {
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            background: rgba(245, 158, 11, 0.12);
+            color: #fcd34d;
+        }
+
+        .message-alert.success {
+            border-color: rgba(16, 185, 129, 0.35);
+            background: rgba(16, 185, 129, 0.12);
+            color: #86efac;
+        }
+
+        .toolbar-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .import-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: rgba(124, 58, 237, 0.12);
+            border: 1px solid rgba(124, 58, 237, 0.28);
+            border-radius: 10px;
+            color: #c4b5fd;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .import-toggle:hover {
+            background: rgba(124, 58, 237, 0.18);
+            border-color: rgba(124, 58, 237, 0.42);
+            transform: translateY(-1px);
+        }
+
+        .import-panel {
+            margin-bottom: 24px;
+            padding: 22px;
+            border-radius: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            display: none;
+            gap: 16px;
+        }
+
+        .import-panel.open {
+            display: grid;
+        }
+
+        .toolbar-row form {
+            margin: 0;
+        }
+
+        .secondary-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: rgba(124, 58, 237, 0.12);
+            border: 1px solid rgba(124, 58, 237, 0.28);
+            color: #c4b5fd;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: 'IBM Plex Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .secondary-btn:hover {
+            background: rgba(124, 58, 237, 0.18);
+            border-color: rgba(124, 58, 237, 0.42);
+            transform: translateY(-1px);
+        }
+
+        .secondary-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .byod-summary {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .summary-card {
+            padding: 18px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+        }
+
+        .summary-card span {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 8px;
+        }
+
+        .summary-card strong {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .summary-card.pending strong {
+            color: var(--accent-orange);
+        }
+
+        .summary-card.approved strong {
+            color: var(--accent-green);
+        }
+
+        .summary-card.total strong {
+            color: var(--accent-primary);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.78);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 28px;
+            z-index: 250;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal-card {
+            width: min(1380px, 100%);
+            max-height: calc(100vh - 56px);
+            overflow: hidden;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 22px;
+            box-shadow: 0 24px 80px rgba(15, 23, 42, 0.45);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 24px 28px 18px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-header h3 {
+            font-size: 24px;
+            margin-bottom: 6px;
+        }
+
+        .modal-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .modal-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+            border-color: rgba(0, 212, 255, 0.25);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .modal-close svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .modal-body {
+            padding: 24px 28px 28px;
+            overflow: auto;
+        }
+
+        .employee-inline {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .employee-inline strong {
+            font-weight: 500;
+        }
+
+        .employee-inline span,
+        .soft-text {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .approval-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            border: 1px solid transparent;
+        }
+
+        .approval-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .approval-badge.approved {
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--accent-green);
+            border-color: rgba(16, 185, 129, 0.28);
+        }
+
+        .approval-badge.approved::before {
+            background: var(--accent-green);
+        }
+
+        .approval-badge.pending {
+            background: rgba(245, 158, 11, 0.12);
+            color: var(--accent-orange);
+            border-color: rgba(245, 158, 11, 0.28);
+        }
+
+        .approval-badge.pending::before {
+            background: var(--accent-orange);
+        }
+
+        .approve-form {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .mini-btn {
+            padding: 8px 12px;
+            border-radius: 9px;
+            border: 1px solid transparent;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: 'IBM Plex Sans', sans-serif;
+        }
+
+        .mini-btn.approve {
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--accent-green);
+            border-color: rgba(16, 185, 129, 0.24);
+        }
+
+        .mini-btn.approve:hover {
+            background: rgba(16, 185, 129, 0.18);
+        }
+
+        .mini-btn.revoke {
+            background: rgba(239, 68, 68, 0.12);
+            color: #fca5a5;
+            border-color: rgba(239, 68, 68, 0.24);
+        }
+
+        .mini-btn.revoke:hover {
+            background: rgba(239, 68, 68, 0.18);
+        }
+
+        /* Table */
+        .table-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease;
+            animation-delay: 0.2s;
+            animation-fill-mode: both;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        th {
+            padding: 16px 20px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 16px 20px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: var(--bg-card-hover);
+        }
+
+        tbody tr.clickable-row {
+            cursor: pointer;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .inventory-num {
+            font-weight: 600;
+            color: var(--accent-primary);
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--accent-primary);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .status-badge.in-use {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--accent-green);
+        }
+
+        .status-badge.in-use::before {
+            background: var(--accent-green);
+        }
+
+        .status-badge.repair {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--accent-orange);
+        }
+
+        .status-badge.repair::before {
+            background: var(--accent-orange);
+        }
+
+        .status-badge.retired {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--accent-red);
+        }
+
+        .status-badge.retired::before {
+            background: var(--accent-red);
+        }
+
+        .status-badge.storage {
+            background: rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            color: #a78bfa;
+        }
+
+        .status-badge.storage::before {
+            background: #a78bfa;
+        }
+
+        .employee-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .employee-name {
+            font-weight: 500;
+        }
+
+        .employee-username {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .location-info {
+            color: var(--text-secondary);
+        }
+
+        .price {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 500;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .inline-delete-form {
+            margin: 0;
+        }
+
+        .action-btn {
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .action-btn.qr {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .action-btn.qr svg {
+            fill: var(--accent-primary);
+        }
+
+        .action-btn.qr:hover {
+            background: rgba(0, 212, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .action-btn.edit {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .action-btn.edit svg {
+            fill: var(--accent-primary);
+        }
+
+        .action-btn.edit:hover {
+            background: rgba(0, 212, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .action-btn.delete {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .action-btn.delete svg {
+            fill: var(--accent-red);
+        }
+
+        .action-btn.delete:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            fill: var(--text-secondary);
+            opacity: 0.5;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 60px;
+            padding: 30px 50px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .footer span {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 500;
+        }
+
+        @media (max-width: 1024px) {
+            .header {
+                padding: 18px 24px;
+            }
+
+            .main {
+                padding: 32px 24px;
+            }
+
+            .footer {
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+                padding: 16px 18px;
+            }
+
+            .header-left,
+            .header .user-info {
+                width: 100%;
+                justify-content: space-between;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+
+            .main {
+                padding: 28px 18px;
+            }
+
+            .page-header {
+                margin-bottom: 28px;
+            }
+
+            .page-header h2 {
+                font-size: 26px;
+            }
+
+            .filter-bar,
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-select,
+            .filter-btn,
+            .reset-btn,
+            .add-btn,
+            .import-toggle {
+                width: 100%;
+                min-width: 0;
+                margin-left: 0;
+                justify-content: center;
+            }
+
+            .toolbar-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .byod-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-overlay {
+                padding: 16px;
+            }
+
+            .modal-header,
+            .modal-body {
+                padding-left: 18px;
+                padding-right: 18px;
+            }
+
+            .modal-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .modal-close {
+                align-self: flex-end;
+            }
+
+            .table-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            table {
+                min-width: 1100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                gap: 12px;
+            }
+
+            .logo-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .logo h1 {
+                font-size: 16px;
+            }
+
+            .username {
+                width: 100%;
+            }
+
+            .logout-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .page-header h2 {
+                font-size: 24px;
+            }
+
+            .page-header p {
+                font-size: 14px;
+            }
+
+            th,
+            td {
+                padding: 14px 16px;
+            }
+
+            .actions {
+                flex-wrap: nowrap;
+            }
+        }
+    </style>
+    {% include 'theme_head.html' %}
+</head>
+<body>
+    {% with header_back_url='home' %}
+    {% include 'includes/global_header.html' %}
+    {% endwith %}
+
+
+    <main class="main">
+        {% if messages %}
+        <div class="message-list">
+            {% for message in messages %}
+            <div class="message-alert{% if message.tags == 'success' %} success{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="page-header">
+            <h2>Управление <span>активами</span></h2>
+            <p>Просмотр, фильтрация и управление IT-оборудованием</p>
+        </div>
+
+        <form method="get" class="filter-bar">
+            <div class="filter-group">
+                <label for="type">Тип:</label>
+                <select name="type" id="type" class="filter-select">
+                    <option value="">Все типы</option>
+                    {% for value, label in type_choices %}
+                    <option value="{{ value }}" {% if request.GET.type == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="status">Статус:</label>
+                <select name="status" id="status" class="filter-select">
+                    <option value="">Все статусы</option>
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="employee">Сотрудник:</label>
+                <select name="employee" id="employee" class="filter-select">
+                    <option value="">Все сотрудники</option>
+                    {% for emp in employees %}
+                    <option value="{{ emp.id }}" {% if request.GET.employee == emp.id|stringformat:"s" %}selected{% endif %}>{{ emp.get_full_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="filter-btn">Поиск</button>
+            <a href="{% url 'assets' %}" class="reset-btn">Сбросить</a>
+        </form>
+
+        {% if can_manage_assets %}
+        <div class="toolbar-row">
+            <button type="button" class="import-toggle" onclick="document.getElementById('asset-import-panel').classList.toggle('open')">
+                Импорт из Excel
+            </button>
+
+            <a href="{% url 'asset_add' %}" class="add-btn" style="margin-left: 0;">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                </svg>
+                Добавить актив
+            </a>
+
+            <button type="button" class="secondary-btn" style="margin-left: auto;" onclick="openByodOverviewModal()">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                </svg>
+                Личные устройства сотрудников
+            </button>
+        </div>
+
+        <div id="asset-import-panel" class="import-panel">
+            <div>
+                <h3 style="font-size: 18px; margin-bottom: 8px;">Импорт активов из Excel</h3>
+            </div>
+
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+                <a href="{% url 'asset_import_template' %}" class="reset-btn">Скачать шаблон Excel</a>
+            </div>
+
+            <form method="post" action="{% url 'asset_import_excel' %}" enctype="multipart/form-data" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+                {% csrf_token %}
+                <input type="file" name="excel_file" accept=".xlsx" style="padding: 10px 14px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 10px; color: var(--text-primary); min-width: 260px;">
+                <button type="submit" class="filter-btn">Импортировать Excel</button>
+                {% if not excel_import_available %}
+                <span style="color: var(--accent-red); font-size: 13px;">OpenPyXL не установлен, импорт сейчас недоступен</span>
+                {% endif %}
+            </form>
+
+            <div style="color: var(--text-secondary); font-size: 13px; line-height: 1.6;">
+                <div><strong>Обязательные колонки:</strong> inventory_number, asset_type, status</div>
+                <div><strong>Опционально:</strong> asset_name, serial_number, employee_username, location, purchase_date, price, description</div>
+                <div><strong>Формат даты:</strong> YYYY-MM-DD, DD.MM.YYYY или DD/MM/YYYY</div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="table-container">
+            {% if assets %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Инв. номер</th>
+                        <th>Тип</th>
+                        <th>Модель</th>
+                        <th>Серийный номер</th>
+                        <th>Статус</th>
+                        <th>Сотрудник</th>
+                        <th>Местоположение</th>
+                        <th>Цена</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for asset in assets %}
+                    <tr{% if can_view_asset_card %} class="clickable-row" data-href="{% url 'asset_detail' asset.id %}?from=assets" onclick="window.location.href=this.dataset.href"{% endif %}>
+                        <td class="inventory-num">{{ asset.inventory_number }}</td>
+                        <td><span class="type-badge">{% if asset.asset_type %}{{ asset.asset_type.name }}{% endif %}</span></td>
+                        <td>{% if asset.asset_name %}{{ asset.asset_name }}{% else %}-{% endif %}</td>
+                        <td>{{ asset.serial_number|default:"-" }}</td>
+                        <td>
+                            <span class="status-badge {% if asset.status %}{{ asset.status.name|slugify }}{% endif %}">
+                                {% if asset.status %}{{ asset.status.name }}{% else %}-{% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            {% if asset.employee %}
+                            <div class="employee-info">
+                                <span class="employee-name">{{ asset.employee.get_full_name }}</span>
+                                <span class="employee-username">@{{ asset.employee.username }}</span>
+                            </div>
+                            {% else %}
+                            <span class="location-info">Не назначен</span>
+                            {% endif %}
+                        </td>
+                        <td><span class="location-info">{% if asset.location %}{{ asset.location.name }}{% else %}-{% endif %}</span></td>
+                        <td class="price">{% if asset.price %}{{ asset.price|floatformat:2 }} ₽{% else %}-{% endif %}</td>
+                        <td>
+                            <div class="actions">
+                                <a href="{% url 'asset_qr' asset.id %}" class="action-btn qr" title="QR-код" onclick="event.stopPropagation();">
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 11h8V3H3v8zm2-6h4v4H5V5zm8-2v8h8V3h-8zm6 6h-4V5h4v4zM3 21h8v-8H3v8zm2-6h4v4H5v-4zm13-2h-2v2h2v2h-2v2h2v-2h2v2h2v-2h-2v-2h2v-2h-2v2h-2v-2h-2v2h-2v-2h2v-2h-2v2h-2v-2h-2v2h2v2h-2v2h2v-2h2v2zm2 8v2h-2v-2h2zm4 0v2h-2v-2h2z"/>
+                                    </svg>
+                                </a>
+                                {% if can_manage_assets %}
+                                <a href="{% url 'asset_edit' asset.id %}" class="action-btn edit" title="Редактировать" onclick="event.stopPropagation();">
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                                    </svg>
+                                </a>
+                                <form method="post" action="{% url 'asset_delete' asset.id %}" class="inline-delete-form" onclick="event.stopPropagation();" onsubmit="event.stopPropagation(); return confirm('Удалить актив {{ asset.inventory_number }}?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="action-btn delete" title="Удалить" aria-label="Удалить актив {{ asset.inventory_number }}">
+                                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                        </svg>
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/>
+                </svg>
+                <h3>Активы не найдены</h3>
+                <p>Нет активов, соответствующих выбранным фильтрам</p>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    {% if can_manage_assets %}
+    <div id="byodOverviewModal" class="modal-overlay" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <h3>Личные устройства сотрудников</h3>
+                </div>
+                <button type="button" class="modal-close" aria-label="Закрыть окно" onclick="closeByodOverviewModal()">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.41L10.59 13.41 4.29 19.7 2.88 18.29 9.17 12 2.88 5.71 4.29 4.3l6.3 6.29 6.29-6.3z"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="byod-summary">
+                    <div class="summary-card total">
+                        <span>Всего устройств</span>
+                        <strong>{{ byod_total_count }}</strong>
+                    </div>
+                    <div class="summary-card pending">
+                        <span>Ожидают согласования</span>
+                        <strong>{{ byod_pending_count }}</strong>
+                    </div>
+                    <div class="summary-card approved">
+                        <span>Согласовано</span>
+                        <strong>{{ byod_approved_count }}</strong>
+                    </div>
+                </div>
+                <div class="table-container">
+                    {% if byod_resources %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Сотрудник</th>
+                                <th>Устройство</th>
+                                <th>Тип</th>
+                                <th>Назначение</th>
+                                <th>Статус</th>
+                                <th>Согласование</th>
+                                <th>Последнее подтверждение</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for resource in byod_resources %}
+                            <tr class="clickable-row" data-href="{% url 'my_byod_resource_detail' resource.id %}?from=assets" onclick="window.location.href=this.dataset.href">
+                                <td>
+                                    <div class="employee-inline">
+                                        <strong>{{ resource.employee.get_full_name|default:resource.employee.username }}</strong>
+                                        <span>@{{ resource.employee.username }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div><strong>{{ resource.device_name }}</strong></div>
+                                    <div class="soft-text">{{ resource.brand_model|default:'Без модели' }}{% if resource.serial_number %} · ID: {{ resource.serial_number }}{% endif %}</div>
+                                </td>
+                                <td>{{ resource.get_resource_type_display }}</td>
+                                <td>
+                                    {{ resource.work_purpose }}
+                                    {% if resource.compensation_notes %}
+                                    <div class="soft-text">{{ resource.compensation_notes }}</div>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="status-badge {% if resource.usage_status == 'active' %}in-use{% elif resource.usage_status == 'limited' %}storage{% elif resource.usage_status == 'paused' %}repair{% else %}retired{% endif %}">
+                                        {{ resource.get_usage_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="approval-badge {% if resource.is_company_approved %}approved{% else %}pending{% endif %}">
+                                        {% if resource.is_company_approved %}Согласовано{% else %}Ожидает согласования{% endif %}
+                                    </span>
+                                </td>
+                                <td>{{ resource.last_confirmed_at|date:"d.m.Y H:i"|default:"—" }}</td>
+                                <td>
+                                    <form method="post" class="approve-form" onclick="event.stopPropagation();" onsubmit="event.stopPropagation();">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="resource_id" value="{{ resource.id }}">
+                                        {% if resource.is_company_approved %}
+                                        <input type="hidden" name="byod_action" value="revoke">
+                                        <button type="submit" class="mini-btn revoke">Снять согласование</button>
+                                        {% else %}
+                                        <input type="hidden" name="byod_action" value="approve">
+                                        <button type="submit" class="mini-btn approve">Согласовать</button>
+                                        {% endif %}
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4 6h16v10H4zM2 4v14h20V4H2zm8 15h4v1h-4z"/>
+                        </svg>
+                        <h3>Личных устройств пока нет</h3>
+                        <p>Сотрудники ещё не добавили личные устройства в рабочий реестр.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% include 'theme_script.html' %}
+    <script>
+        function openByodOverviewModal() {
+            const modal = document.getElementById('byodOverviewModal');
+            if (modal) {
+                modal.classList.add('open');
+                modal.setAttribute('aria-hidden', 'false');
+            }
+        }
+
+        function closeByodOverviewModal() {
+            const modal = document.getElementById('byodOverviewModal');
+            if (modal) {
+                modal.classList.remove('open');
+                modal.setAttribute('aria-hidden', 'true');
+            }
+        }
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                closeByodOverviewModal();
+            }
+        });
+
+        const byodOverviewModal = document.getElementById('byodOverviewModal');
+        if (byodOverviewModal) {
+            byodOverviewModal.addEventListener('click', function (event) {
+                if (event.target === this) {
+                    closeByodOverviewModal();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

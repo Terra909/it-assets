@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>История актива - IT Assets</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-card-hover: rgba(255, 255, 255, 0.06);
+            --accent-primary: #00d4ff;
+            --accent-secondary: #7c3aed;
+            --accent-gradient: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
+            --text-primary: #f0f0f5;
+            --text-secondary: #8888a0;
+            --border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'IBM Plex Sans', sans-serif; min-height: 100vh; background: var(--bg-primary); color: var(--text-primary); }
+        .header {
+            position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 50px; background: rgba(10, 10, 15, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-color);
+        }
+        .header-left, .user-info { display: flex; align-items: center; gap: 20px; }
+        .back-btn {
+            display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;
+            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; color: var(--text-secondary); text-decoration: none; transition: all 0.3s ease;
+        }
+        .back-btn:hover { background: var(--bg-card-hover); border-color: rgba(0, 212, 255, 0.3); color: var(--accent-primary); }
+        .back-btn svg, .logout-btn svg { width: 20px; height: 20px; fill: currentColor; }
+        .logo { display: flex; align-items: center; gap: 15px; }
+        .logo-icon {
+            width: 45px; height: 45px; background: var(--accent-gradient); border-radius: 12px; display: flex; align-items: center; justify-content: center;
+        }
+        .logo-icon svg { width: 24px; height: 24px; fill: white; }
+        .logo h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700; background: var(--accent-gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 1px;
+        }
+        .username { color: var(--text-secondary); font-size: 14px; }
+        .username span { color: var(--accent-primary); font-weight: 500; }
+        .logout-btn {
+            display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; text-decoration: none; border-radius: 10px; font-size: 13px; font-weight: 500;
+        }
+        .main { max-width: 1200px; margin: 0 auto; padding: 40px 50px; }
+        .page-title { margin-bottom: 30px; animation: fadeInUp 0.6s ease; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .page-title h2 { font-size: 32px; font-weight: 600; margin-bottom: 12px; }
+        .page-title p { color: var(--text-secondary); font-size: 16px; }
+        .asset-badge {
+            display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; padding: 8px 14px;
+            background: rgba(0, 212, 255, 0.08); border: 1px solid rgba(0, 212, 255, 0.22); border-radius: 10px; color: var(--accent-primary);
+            font-family: 'Orbitron', sans-serif; font-size: 13px;
+        }
+        .table-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; }
+        .table-wrapper { overflow-x: auto; }
+        .action-log-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .action-log-table thead { background: rgba(0, 212, 255, 0.05); }
+        .action-log-table th {
+            padding: 16px 20px; text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--text-secondary); border-bottom: 1px solid var(--border-color); white-space: nowrap;
+        }
+        .action-log-table td { padding: 16px 20px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        .action-log-table tbody tr:hover { background: var(--bg-card-hover); }
+        .time-cell { color: var(--text-secondary); white-space: nowrap; font-size: 13px; }
+        .user-cell { font-weight: 500; color: var(--accent-primary); }
+        .badge {
+            display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+            background: rgba(124, 58, 237, 0.15); color: #a78bfa; border: 1px solid rgba(124, 58, 237, 0.3);
+        }
+        .empty-message { text-align: center; padding: 60px; color: var(--text-secondary); }
+        @media (max-width: 768px) {
+            .header { flex-direction: column; align-items: flex-start; gap: 16px; padding: 16px 18px; }
+            .header-left, .user-info, .main { width: 100%; }
+            .header-left, .user-info { justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+            .main { padding: 24px 18px; }
+        }
+    </style>
+    {% include 'theme_head.html' %}
+</head>
+<body>
+    {% url 'asset_detail' asset.pk as header_back_href %}
+    {% with header_back_aria_label="Назад к карточке актива" %}
+    {% include 'includes/global_header.html' %}
+    {% endwith %}
+
+    <main class="main">
+        <div class="page-title">
+            <h2>История актива</h2>
+            <p>Все найденные действия, связанные с этим активом</p>
+            <div class="asset-badge">{{ asset.inventory_number }}{% if asset.asset_name %} · {{ asset.asset_name }}{% endif %}</div>
+        </div>
+
+        <div class="table-card">
+            <div class="table-wrapper">
+                <table class="action-log-table">
+                    <thead>
+                        <tr>
+                            <th>Время</th>
+                            <th>Пользователь</th>
+                            <th>Действие</th>
+                            <th>Описание</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for action in actions %}
+                        <tr>
+                            <td class="time-cell">{{ action.created_at|date:"d.m.Y H:i:s" }}</td>
+                            <td class="user-cell">{{ action.user.username|default:"Система" }}</td>
+                            <td><span class="badge">{{ action.get_action_type_display }}</span></td>
+                            <td>{{ action.description|default:"-" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="empty-message">По этому активу пока нет истории</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    {% include 'theme_script.html' %}
+</body>
+</html>

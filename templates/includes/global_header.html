@@ -1,0 +1,37 @@
+<header class="header">
+    <div class="header-top">
+        <div class="header-left{% if not header_back_url and not header_back_href %} header-left--full{% endif %}">
+            {% if header_back_href %}
+            <a href="{{ header_back_href }}" class="back-btn" aria-label="{{ header_back_aria_label|default:'Назад' }}">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+            </a>
+            {% elif header_back_url %}
+            <a href="{% url header_back_url %}" class="back-btn" aria-label="{{ header_back_aria_label|default:'Назад' }}">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+            </a>
+            {% endif %}
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/>
+                    </svg>
+                </div>
+                <h1>IT ASSETS</h1>
+            </div>
+        </div>
+        {% include 'theme_toggle_button.html' %}
+    </div>
+    <div class="user-info">
+        <span class="username"><span>{{ request.user.get_full_name|default:request.user.username }}</span></span>
+        <a href="{% url 'logout' %}" class="logout-btn">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+            </svg>
+            Выйти
+        </a>
+    </div>
+</header>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR-код актива - IT Assets</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-card-hover: rgba(255, 255, 255, 0.06);
+            --accent-primary: #00d4ff;
+            --accent-secondary: #7c3aed;
+            --accent-gradient: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
+            --accent-green: #10b981;
+            --text-primary: #f0f0f5;
+            --text-secondary: #8888a0;
+            --border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans', sans-serif;
+            min-height: 100vh;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            text-align: center;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .qr-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 48px;
+            backdrop-filter: blur(20px);
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+        }
+
+        .back-link:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        .back-link svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        .qr-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .asset-name {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+
+        .qr-container {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            display: inline-block;
+            margin-bottom: 24px;
+            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.15);
+        }
+
+        .qr-container img {
+            display: block;
+            width: 200px;
+            height: 200px;
+        }
+
+        .qr-url {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 20px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 12px;
+            font-size: 13px;
+            color: var(--accent-primary);
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 24px;
+        }
+
+        .qr-url svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--accent-primary);
+        }
+
+        .asset-preview {
+            text-align: left;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .asset-preview-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .asset-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .asset-row:last-child {
+            border-bottom: none;
+        }
+
+        .asset-label {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .asset-value {
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .inventory-num {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent-primary);
+        }
+
+        .print-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: var(--accent-gradient);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .print-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .print-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .back-link, .print-btn {
+                display: none;
+            }
+            .qr-card {
+                border: none;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{% url 'assets' %}" class="back-link">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+            Вернуться к активам
+        </a>
+
+        <div class="qr-card">
+            <h1 class="qr-title">QR-код актива</h1>
+            <p class="asset-name">{{ asset.asset_name|default:"Без названия" }} ({{ asset.inventory_number }})</p>
+
+            <div class="qr-container">
+                <img src="data:image/png;base64,{{ qr_image }}" alt="QR-код">
+            </div>
+
+            <div class="qr-url">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
+                </svg>
+                {{ qr_url }}
+            </div>
+
+            <div class="asset-preview">
+                <div class="asset-preview-title">Информация об активе</div>
+                <div class="asset-row">
+                    <span class="asset-label">Инвентарный номер</span>
+                    <span class="asset-value inventory-num">{{ asset.inventory_number }}</span>
+                </div>
+                <div class="asset-row">
+                    <span class="asset-label">Серийный номер</span>
+                    <span class="asset-value">{{ asset.serial_number|default:"—" }}</span>
+                </div>
+                <div class="asset-row">
+                    <span class="asset-label">Тип</span>
+                    <span class="asset-value">{{ asset.asset_type.name|default:"—" }}</span>
+                </div>
+                <div class="asset-row">
+                    <span class="asset-label">Статус</span>
+                    <span class="asset-value">{{ asset.status.name|default:"—" }}</span>
+                </div>
+                <div class="asset-row">
+                    <span class="asset-label">Местоположение</span>
+                    <span class="asset-value">{{ asset.location.name|default:"—" }}</span>
+                </div>
+            </div>
+
+            <button onclick="window.print()" class="print-btn">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/>
+                </svg>
+                Распечатать QR-код
+            </button>
+        </div>
+    </div>
+</body>
+</html>

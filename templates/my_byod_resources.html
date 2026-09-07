@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Assets - Личная техника и BYOD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-card-hover: rgba(255, 255, 255, 0.06);
+            --accent-primary: #00d4ff;
+            --accent-secondary: #7c3aed;
+            --accent-gradient: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --text-primary: #f0f0f5;
+            --text-secondary: #8888a0;
+            --border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans', sans-serif;
+            min-height: 100vh;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(0, 212, 255, 0.3);
+            color: var(--accent-primary);
+        }
+
+        .back-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--accent-gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .logo h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .username {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .username span {
+            color: var(--accent-primary);
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .logout-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 50px;
+        }
+
+        .page-header {
+            margin-bottom: 28px;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-header h2 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .page-header h2 span {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            max-width: 900px;
+        }
+
+        .messages {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .message {
+            padding: 14px 18px;
+            border-radius: 14px;
+            border: 1px solid transparent;
+            font-size: 14px;
+        }
+
+        .message.success {
+            background: rgba(16, 185, 129, 0.10);
+            border-color: rgba(16, 185, 129, 0.25);
+            color: #d1fae5;
+        }
+
+        .message.error {
+            background: rgba(239, 68, 68, 0.10);
+            border-color: rgba(239, 68, 68, 0.25);
+            color: #fecaca;
+        }
+
+        .info-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 22px;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.16), rgba(0, 212, 255, 0.10));
+            border: 1px solid rgba(124, 58, 237, 0.28);
+            border-radius: 18px;
+        }
+
+        .info-banner h3 {
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+
+        .info-banner p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(380px, 0.95fr);
+            gap: 24px;
+        }
+
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .panel-header {
+            padding: 22px 24px 14px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .panel-header h3 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .panel-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.55;
+        }
+
+        .panel-body {
+            padding: 24px;
+        }
+
+        .subtle-note {
+            margin-bottom: 20px;
+            padding: 16px 18px;
+            border-radius: 14px;
+            background: rgba(0, 212, 255, 0.06);
+            border: 1px solid rgba(0, 212, 255, 0.16);
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'IBM Plex Sans', sans-serif;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: rgba(0, 212, 255, 0.4);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.08);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        .checks {
+            display: grid;
+            gap: 12px;
+            margin: 8px 0 20px;
+        }
+
+        .check {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .check input {
+            width: auto;
+            margin-top: 3px;
+            accent-color: #7c3aed;
+        }
+
+        .btn,
+        .ghost-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'IBM Plex Sans', sans-serif;
+            text-decoration: none;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+        }
+
+        .btn:hover {
+            transform: translateX(5px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .ghost-btn {
+            padding: 10px 14px;
+            background: rgba(124, 58, 237, 0.12);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            color: #ddd6fe;
+        }
+
+        .ghost-btn:hover {
+            background: rgba(124, 58, 237, 0.18);
+            transform: translateY(-1px);
+        }
+
+        .resource-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .resource-item {
+            padding: 18px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            background: var(--bg-card-hover);
+        }
+
+        .resource-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 10px;
+        }
+
+        .resource-head h4 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .meta {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0 14px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            border: 1px solid transparent;
+        }
+
+        .badge.status {
+            background: rgba(0, 212, 255, 0.12);
+            border-color: rgba(0, 212, 255, 0.28);
+            color: var(--accent-primary);
+        }
+
+        .badge.approved {
+            background: rgba(16, 185, 129, 0.12);
+            border-color: rgba(16, 185, 129, 0.28);
+            color: #34d399;
+        }
+
+        .badge.pending {
+            background: rgba(245, 158, 11, 0.12);
+            border-color: rgba(245, 158, 11, 0.28);
+            color: #fbbf24;
+        }
+
+        .badge.consent {
+            background: rgba(124, 58, 237, 0.12);
+            border-color: rgba(124, 58, 237, 0.28);
+            color: #c4b5fd;
+        }
+
+        .resource-item p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        .resource-item p strong {
+            color: var(--text-primary);
+        }
+
+        .inline-form {
+            margin-top: 14px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            fill: var(--text-secondary);
+            opacity: 0.5;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 1024px) {
+            .header {
+                padding: 18px 24px;
+            }
+
+            .main {
+                padding: 40px 24px;
+            }
+
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+                padding: 16px 18px;
+            }
+
+            .header-left,
+            .user-info {
+                width: 100%;
+                justify-content: space-between;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+
+            .main {
+                padding: 32px 18px;
+            }
+
+            .page-header h2 {
+                font-size: 28px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .resource-head,
+            .info-banner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                gap: 12px;
+            }
+
+            .logo-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .logo h1 {
+                font-size: 16px;
+            }
+
+            .username {
+                width: 100%;
+            }
+
+            .logout-btn,
+            .btn,
+            .ghost-btn {
+                width: 100%;
+            }
+
+            .panel-body,
+            .panel-header {
+                padding-left: 18px;
+                padding-right: 18px;
+            }
+        }
+    </style>
+    {% include 'theme_head.html' %}
+</head>
+<body>
+    {% with header_back_url='my_assets' %}
+    {% include 'includes/global_header.html' %}
+    {% endwith %}
+
+    <main class="main">
+        <div class="page-header">
+            <h2>Личная техника и <span>BYOD</span></h2>
+            <p>Фиксируйте личные устройства, которые используются для рабочих задач, в мягком формате: без перевода в корпоративные активы, но с понятными договорённостями, ограничениями поддержки и подтверждением согласия.</p>
+        </div>
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {% if message.tags == 'success' %}success{% else %}error{% endif %}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="info-banner">
+            <div>
+                <h3>Мягкий BYOD-учёт — как часть общей системы активов</h3>
+                <p>Раздел оформлен в той же логике, что и остальные экраны: понятная карточка, единый ритм интерфейса и прозрачные статусы согласия, чтобы личная техника выглядела как контролируемый рабочий ресурс, а не отдельный модуль.</p>
+            </div>
+        </div>
+
+        <div class="layout-grid">
+            <section class="panel">
+                <div class="panel-header">
+                    <h3>Добавить личное устройство</h3>
+                    <p>Заполните только те данные, которые действительно нужны для рабочего контекста и договорённостей.</p>
+                </div>
+                <div class="panel-body">
+                <div class="subtle-note">Мягкий учёт BYOD не означает передачу устройства компании. Он нужен, чтобы зафиксировать, что устройство участвует в рабочих процессах, какие есть договорённости и какие риски стоит учитывать.</div>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="device_name">Название устройства *</label>
+                            <input id="device_name" name="device_name" placeholder="Например, MacBook Air сотрудника" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="resource_type">Тип ресурса</label>
+                            <select id="resource_type" name="resource_type">
+                                {% for value, label in resource_types %}
+                                <option value="{{ value }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="brand_model">Марка и модель</label>
+                            <input id="brand_model" name="brand_model" placeholder="Apple MacBook Air M2">
+                        </div>
+                        <div class="form-group">
+                            <label for="serial_number">Серийный номер / ID</label>
+                            <input id="serial_number" name="serial_number" placeholder="Необязательно">
+                        </div>
+                        <div class="form-group">
+                            <label for="usage_status">Статус использования</label>
+                            <select id="usage_status" name="usage_status">
+                                {% for value, label in usage_statuses %}
+                                <option value="{{ value }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group full">
+                            <label for="work_purpose">Для каких рабочих задач используется *</label>
+                            <input id="work_purpose" name="work_purpose" placeholder="Например, работа в CRM, почта, созвоны, кассовое приложение" required>
+                        </div>
+                        <div class="form-group full">
+                            <label for="support_notes">Ограничения поддержки и договорённости</label>
+                            <textarea id="support_notes" name="support_notes" placeholder="Например, компания не обслуживает личное устройство, помогает только с рабочими приложениями"></textarea>
+                        </div>
+                        <div class="form-group full">
+                            <label for="compensation_notes">Компенсация / договорённости</label>
+                            <input id="compensation_notes" name="compensation_notes" placeholder="Например, компенсация связи или амортизации по согласованию">
+                        </div>
+                    </div>
+
+                    <div class="checks">
+                        <label class="check"><input type="checkbox" name="employee_consent"> <span>Я подтверждаю, что добровольно указываю это устройство в BYOD-учёте для рабочих задач и понимаю, что оно остаётся личным ресурсом.</span></label>
+                        {% if is_admin or is_manager %}
+                        <label class="check"><input type="checkbox" name="is_company_approved"> <span>Устройство согласовано компанией для рабочих сценариев.</span></label>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="btn">Добавить в BYOD-учёт</button>
+                </form>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header">
+                    <h3>Мои зарегистрированные устройства</h3>
+                    <p>Список личных устройств, которые уже участвуют в рабочих процессах и отражены в BYOD-учёте.</p>
+                </div>
+                <div class="panel-body">
+                {% if byod_resources %}
+                <div class="resource-list">
+                    {% for resource in byod_resources %}
+                    <article class="resource-item">
+                        <div class="resource-head">
+                            <div>
+                                <h4>{{ resource.device_name }}</h4>
+                                <div class="meta">{{ resource.get_resource_type_display }}{% if resource.brand_model %} • {{ resource.brand_model }}{% endif %}{% if resource.serial_number %} • ID: {{ resource.serial_number }}{% endif %}</div>
+                            </div>
+                            <div class="meta">Обновлено: {{ resource.updated_at|date:"d.m.Y H:i" }}</div>
+                        </div>
+
+                        <div class="badges">
+                            <span class="badge status">{{ resource.get_usage_status_display }}</span>
+                            <span class="badge consent">{% if resource.employee_consent %}Согласие подтверждено{% else %}Согласие не подтверждено{% endif %}</span>
+                            <span class="badge {% if resource.is_company_approved %}approved{% else %}pending{% endif %}">
+                                {% if resource.is_company_approved %}Согласовано компанией{% else %}Требует согласования{% endif %}
+                            </span>
+                        </div>
+
+                        <p><strong>Рабочее назначение:</strong> {{ resource.work_purpose }}</p>
+                        {% if resource.support_notes %}<p><strong>Поддержка:</strong> {{ resource.support_notes }}</p>{% endif %}
+                        {% if resource.compensation_notes %}<p><strong>Компенсация:</strong> {{ resource.compensation_notes }}</p>{% endif %}
+                        <p><strong>Последнее подтверждение:</strong> {% if resource.last_confirmed_at %}{{ resource.last_confirmed_at|date:"d.m.Y H:i" }}{% else %}-{% endif %}</p>
+
+                        {% if not resource.employee_consent %}
+                        <form method="post" class="inline-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="confirm">
+                            <input type="hidden" name="resource_id" value="{{ resource.id }}">
+                            <button type="submit" class="ghost-btn">Подтвердить согласие</button>
+                        </form>
+                        {% endif %}
+                    </article>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17 1H7C5.9 1 5 1.9 5 3v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2zm0 16H7V5h10v12z"/></svg>
+                    <h3>Пока нет устройств</h3>
+                    <p>У вас пока нет устройств в мягком BYOD-учёте.</p>
+                </div>
+                {% endif %}
+                </div>
+            </section>
+        </div>
+    </main>
+    {% include 'theme_script.html' %}
+</body>
+</html>

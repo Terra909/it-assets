@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Информация об активе - IT Assets</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-card-hover: rgba(255, 255, 255, 0.06);
+            --accent-primary: #00d4ff;
+            --accent-secondary: #7c3aed;
+            --accent-gradient: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --text-primary: #f0f0f5;
+            --text-secondary: #8888a0;
+            --border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans', sans-serif;
+            min-height: 100vh;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(0, 212, 255, 0.3);
+            color: var(--accent-primary);
+        }
+
+        .back-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--accent-gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .logo h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .username {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .username span {
+            color: var(--accent-primary);
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+
+        .logout-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 50px;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .inventory-badge {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            padding: 8px 16px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            color: var(--accent-primary);
+        }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .info-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .info-card:nth-child(2) { animation-delay: 0.1s; }
+        .info-card:nth-child(3) { animation-delay: 0.2s; }
+        .info-card:nth-child(4) { animation-delay: 0.3s; }
+
+        .info-card-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-card-title svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--accent-primary);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .info-value {
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            text-align: right;
+        }
+
+        .info-value.highlight {
+            color: var(--accent-primary);
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .status-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-badge.in-use {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--accent-green);
+        }
+
+        .status-badge.in-use::before {
+            background: var(--accent-green);
+        }
+
+        .status-badge.repair {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--accent-orange);
+        }
+
+        .status-badge.repair::before {
+            background: var(--accent-orange);
+        }
+
+        .status-badge.retired {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--accent-red);
+        }
+
+        .status-badge.retired::before {
+            background: var(--accent-red);
+        }
+
+        .status-badge.storage {
+            background: rgba(124, 58, 237, 0.15);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            color: #a78bfa;
+        }
+
+        .status-badge.storage::before {
+            background: #a78bfa;
+        }
+
+        /* Employee Card */
+        .employee-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .employee-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .employee-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .employee-name {
+            font-weight: 500;
+        }
+
+        .employee-username {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Type Badge */
+        .type-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--accent-primary);
+        }
+
+        /* Description Card */
+        .description-card {
+            grid-column: 1 / -1;
+        }
+
+        .description-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        /* Admin Actions */
+        .admin-actions {
+            display: flex;
+            gap: 16px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .action-btn.edit {
+            background: rgba(0, 212, 255, 0.15);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: var(--accent-primary);
+        }
+
+        .action-btn.edit:hover {
+            background: rgba(0, 212, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .action-btn.delete {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--accent-red);
+        }
+
+        .action-btn.delete:hover {
+            background: rgba(239, 68, 68, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .action-btn.transfer {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--accent-orange);
+            cursor: pointer;
+        }
+
+        .action-btn.transfer:hover {
+            background: rgba(245, 158, 11, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .action-btn.history {
+            background: rgba(124, 58, 237, 0.12);
+            border: 1px solid rgba(124, 58, 237, 0.35);
+            color: #b794f6;
+        }
+
+        .action-btn.history:hover {
+            background: rgba(124, 58, 237, 0.22);
+            transform: translateY(-2px);
+        }
+
+        .message-list {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 24px;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        .message-alert {
+            padding: 14px 18px;
+            border-radius: 12px;
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            background: rgba(239, 68, 68, 0.12);
+            color: #fca5a5;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .message-alert.success {
+            border-color: rgba(16, 185, 129, 0.35);
+            background: rgba(16, 185, 129, 0.14);
+            color: #6ee7b7;
+        }
+
+        .transfer-panel {
+            margin-top: 30px;
+            padding: 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        .transfer-panel.hidden {
+            display: none;
+        }
+
+        .transfer-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .transfer-warning {
+            margin-bottom: 18px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            background: rgba(245, 158, 11, 0.12);
+            color: #fcd34d;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .transfer-form {
+            display: grid;
+            gap: 16px;
+        }
+
+        .transfer-form label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .transfer-form select {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: 'IBM Plex Sans', sans-serif;
+        }
+
+        .transfer-form select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+
+        .transfer-form-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .transfer-submit,
+        .transfer-cancel {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'IBM Plex Sans', sans-serif;
+        }
+
+        .transfer-submit {
+            background: var(--accent-gradient);
+            color: white;
+        }
+
+        .transfer-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.25);
+        }
+
+        .transfer-cancel {
+            background: var(--bg-card);
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .transfer-cancel:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 60px;
+            padding: 30px 50px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .footer span {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 500;
+        }
+    </style>
+    {% include 'theme_head.html' %}
+</head>
+<body>
+    {% include 'includes/global_header.html' %}
+
+    <main class="main">
+        {% if messages %}
+        <div class="message-list">
+            {% for message in messages %}
+            <div class="message-alert{% if message.tags == 'success' %} success{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="page-header">
+            <h1 class="page-title">
+                {{ asset.asset_name|default:"Актив без названия" }}
+                <span class="inventory-badge">{{ asset.inventory_number }}</span>
+            </h1>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-card-title">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                    </svg>
+                    Основная информация
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Тип актива</span>
+                    <span class="info-value">
+                        {% if asset.asset_type %}
+                            <span class="type-badge">{{ asset.asset_type.name }}</span>
+                        {% else %}
+                            —
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Статус</span>
+                    <span class="info-value">
+                        {% if asset.status %}
+                            {% if asset.status.name == 'В использовании' or asset.status.name == 'in_use' %}
+                                <span class="status-badge in-use">{{ asset.status.name }}</span>
+                            {% elif asset.status.name == 'В ремонте' or asset.status.name == 'repair' %}
+                                <span class="status-badge repair">{{ asset.status.name }}</span>
+                            {% elif asset.status.name == 'Списан' or asset.status.name == 'retired' %}
+                                <span class="status-badge retired">{{ asset.status.name }}</span>
+                            {% else %}
+                                <span class="status-badge storage">{{ asset.status.name }}</span>
+                            {% endif %}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Серийный номер</span>
+                    <span class="info-value">{{ asset.serial_number|default:"—" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Инвентарный номер</span>
+                    <span class="info-value highlight">{{ asset.inventory_number }}</span>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-card-title">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                    Ответственный сотрудник
+                </div>
+                {% if asset.employee %}
+                <div class="info-row">
+                    <span class="info-label">Сотрудник</span>
+                    <span class="info-value">
+                        <div class="employee-card">
+                            <div class="employee-avatar">
+                                {{ asset.employee.first_name|default:asset.employee.username|slice:1|upper }}
+                            </div>
+                            <div class="employee-details">
+                                <span class="employee-name">{{ asset.employee.get_full_name|default:asset.employee.username }}</span>
+                                <span class="employee-username">@{{ asset.employee.username }}</span>
+                            </div>
+                        </div>
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Email</span>
+                    <span class="info-value">{{ asset.employee.email|default:"—" }}</span>
+                </div>
+                {% else %}
+                <div class="info-row">
+                    <span class="info-label">Сотрудник</span>
+                    <span class="info-value">—</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="info-card">
+                <div class="info-card-title">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                    Расположение
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Локация</span>
+                    <span class="info-value">{{ asset.location.name|default:"—" }}</span>
+                </div>
+                {% if asset.location.address %}
+                <div class="info-row">
+                    <span class="info-label">Адрес</span>
+                    <span class="info-value">{{ asset.location.address }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="info-card">
+                <div class="info-card-title">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+                    </svg>
+                    Финансовая информация
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Цена</span>
+                    <span class="info-value highlight">{% if asset.price %}{{ asset.price }} ₽{% else %}—{% endif %}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Дата покупки</span>
+                    <span class="info-value">{% if asset.purchase_date %}{{ asset.purchase_date|date:"d.m.Y" }}{% else %}—{% endif %}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Дата создания</span>
+                    <span class="info-value">{{ asset.created_at|date:"d.m.Y H:i" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Последнее обновление</span>
+                    <span class="info-value">{{ asset.updated_at|date:"d.m.Y H:i" }}</span>
+                </div>
+            </div>
+
+            {% if asset.description %}
+            <div class="info-card description-card">
+                <div class="info-card-title">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                    </svg>
+                    Описание
+                </div>
+                <p class="description-text">{{ asset.description }}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if user.is_authenticated and can_manage_assets or user.is_authenticated and can_transfer_asset or user.is_authenticated and can_view_asset_history %}
+        <div class="admin-actions">
+            {% if can_view_asset_history %}
+            <a href="{% url 'asset_history' asset.pk %}" class="action-btn history">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M13 3a9 9 0 1 0 8.95 10h-2.02A7 7 0 1 1 13 5a6.96 6.96 0 0 1 4.24 1.43L14 10h7V3l-2.33 2.33A8.96 8.96 0 0 0 13 3zm-1 5v6l5.25 3.15.75-1.23-4.5-2.67V8H12z"/>
+                </svg>
+                История
+            </a>
+            {% endif %}
+            {% if can_manage_assets %}
+            <a href="{% url 'asset_edit' asset.pk %}" class="action-btn edit">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                </svg>
+                Редактировать актив
+            </a>
+            <a href="{% url 'asset_delete' asset.pk %}" class="action-btn delete">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                </svg>
+                Удалить актив
+            </a>
+            {% endif %}
+            {% if can_transfer_asset %}
+            <button type="button" class="action-btn transfer" id="toggleTransferForm">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16 17v-3h-5v-4l-7 5 7 5v-3zM20 3H8c-1.1 0-2 .9-2 2v4h2V5h12v14H8v-4H6v4c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+                </svg>
+                Передать актив
+            </button>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if can_transfer_asset %}
+        <section class="transfer-panel hidden" id="transferPanel">
+            <h2 class="transfer-title">Передача актива другому пользователю</h2>
+            <div class="transfer-warning">
+                Внимание: после подтверждения актив будет закреплён за другим пользователем.
+            </div>
+            <form method="post" class="transfer-form" onsubmit="return confirm('Подтвердить передачу актива выбранному пользователю?');">
+                {% csrf_token %}
+                <div>
+                    <label for="transfer_to_user">Кому передать актив</label>
+                    <select name="transfer_to_user" id="transfer_to_user" required>
+                        <option value="">Выберите пользователя</option>
+                        {% for transfer_user in transferable_users %}
+                            {% if transfer_user.id != asset.employee_id %}
+                            <option value="{{ transfer_user.id }}">
+                                {% if transfer_user.get_full_name %}{{ transfer_user.get_full_name }}{% else %}{{ transfer_user.username }}{% endif %} (@{{ transfer_user.username }})
+                            </option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="transfer-form-actions">
+                    <button type="submit" class="transfer-submit">Подтвердить передачу</button>
+                    <button type="button" class="transfer-cancel" id="cancelTransferForm">Отмена</button>
+                </div>
+            </form>
+        </section>
+        {% endif %}
+    </main>
+
+    {% include 'theme_script.html' %}
+    {% if can_transfer_asset %}
+    <script>
+        (function () {
+            const toggleBtn = document.getElementById('toggleTransferForm');
+            const cancelBtn = document.getElementById('cancelTransferForm');
+            const panel = document.getElementById('transferPanel');
+
+            if (!toggleBtn || !cancelBtn || !panel) {
+                return;
+            }
+
+            toggleBtn.addEventListener('click', function () {
+                panel.classList.remove('hidden');
+                panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+
+            cancelBtn.addEventListener('click', function () {
+                panel.classList.add('hidden');
+            });
+        })();
+    </script>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Assets - {{ session.title }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    {% include 'theme_head.html' %}
+    <style>
+        :root { --bg-primary:#0a0a0f; --bg-secondary:#12121a; --bg-card:rgba(255,255,255,.03); --bg-card-hover:rgba(255,255,255,.06); --accent-primary:#00d4ff; --accent-secondary:#7c3aed; --accent-gradient:linear-gradient(135deg,#00d4ff 0%,#7c3aed 100%); --accent-green:#10b981; --accent-orange:#f59e0b; --accent-red:#ef4444; --text-primary:#f0f0f5; --text-secondary:#8888a0; --border-color:rgba(255,255,255,.08); }
+        * { box-sizing:border-box; margin:0; padding:0; }
+        body { font-family:'IBM Plex Sans',sans-serif; background:var(--bg-primary); color:var(--text-primary); min-height:100vh; }
+        .header { position:sticky; top:0; z-index:100; display:flex; justify-content:space-between; align-items:center; padding:20px 50px; background:rgba(10,10,15,.8); backdrop-filter:blur(20px); border-bottom:1px solid var(--border-color); }
+        .header-left, .user-info { display:flex; align-items:center; gap:20px; }
+        .back-btn, .logout-btn, .btn, .mini-btn { text-decoration:none; border-radius:10px; }
+        .back-btn { width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:var(--bg-card); border:1px solid var(--border-color); color:var(--text-secondary); transition:all .3s ease; }
+        .back-btn:hover { background:var(--bg-card-hover); border-color:rgba(0,212,255,.3); color:var(--accent-primary); }
+        .back-btn svg, .logout-btn svg { width:18px; height:18px; fill:currentColor; }
+        .logo { display:flex; align-items:center; gap:15px; }
+        .logo-icon { width:45px; height:45px; background:var(--accent-gradient); border-radius:12px; display:flex; align-items:center; justify-content:center; }
+        .logo-icon svg { width:24px; height:24px; fill:#fff; }
+        .logo h1 { font-family:'Orbitron',sans-serif; font-size:18px; font-weight:700; letter-spacing:1px; background:var(--accent-gradient); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+        .username { color:var(--text-secondary); font-size:14px; }
+        .username span { color:var(--accent-primary); font-weight:500; }
+        .logout-btn { display:inline-flex; align-items:center; gap:8px; padding:10px 20px; color:#ef4444; background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.3); font-size:13px; font-weight:500; transition:all .3s ease; }
+        .logout-btn:hover { background:rgba(239,68,68,.2); border-color:rgba(239,68,68,.5); transform:translateY(-2px); }
+        .main { max-width:1560px; margin:0 auto; padding:40px 50px; }
+        .page-header { display:flex; justify-content:space-between; gap:20px; align-items:flex-start; margin-bottom:24px; }
+        .page-header h2 { font-size:32px; margin-bottom:10px; }
+        .subtitle, .meta, .empty { color:var(--text-secondary); }
+        .message-list { display:grid; gap:12px; margin-bottom:20px; }
+        .message-alert { padding:14px 18px; border-radius:12px; border:1px solid rgba(245,158,11,.35); background:rgba(245,158,11,.12); color:#fcd34d; }
+        .message-alert.success { border-color:rgba(16,185,129,.35); background:rgba(16,185,129,.12); color:#86efac; }
+        .summary-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:14px; margin-bottom:24px; }
+        .summary-card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:16px; padding:18px; }
+        .summary-card span { display:block; color:var(--text-secondary); font-size:12px; margin-bottom:8px; text-transform:uppercase; }
+        .summary-card strong { font-size:24px; }
+        .toolbar { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:22px; }
+        .toolbar form { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+        select, input, textarea { width:100%; padding:10px 12px; border:1px solid var(--border-color); border-radius:10px; background:rgba(255,255,255,.03); color:var(--text-primary); font:inherit; }
+        select { appearance:auto; }
+        select option { background-color:var(--bg-secondary); color:var(--text-primary); }
+        .btn { display:inline-flex; align-items:center; justify-content:center; padding:11px 18px; border:none; cursor:pointer; background:var(--accent-gradient); color:#fff; font:inherit; font-weight:500; }
+        .btn.secondary { background:rgba(255,255,255,.04); border:1px solid var(--border-color); color:var(--text-primary); }
+        .btn.warning { background:linear-gradient(135deg,#f59e0b 0%, #ef4444 100%); }
+        .table-card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:18px; overflow:hidden; }
+        .table-wrapper { overflow:auto; }
+        table { width:100%; border-collapse:collapse; min-width:1400px; }
+        th, td { padding:14px 16px; border-bottom:1px solid var(--border-color); vertical-align:top; text-align:left; }
+        th { background:rgba(0,212,255,.06); font-size:12px; text-transform:uppercase; letter-spacing:.06em; }
+        tbody tr:hover td { background:var(--bg-card-hover); }
+        .result-badge { display:inline-flex; padding:6px 10px; border-radius:999px; font-size:12px; border:1px solid transparent; }
+        .result-badge.pending { color:#cbd5e1; background:rgba(148,163,184,.12); border-color:rgba(148,163,184,.3); }
+        .result-badge.matched { color:#86efac; background:rgba(16,185,129,.12); border-color:rgba(16,185,129,.3); }
+        .result-badge.mismatch { color:#fdba74; background:rgba(249,115,22,.12); border-color:rgba(249,115,22,.3); }
+        .result-badge.missing { color:#fca5a5; background:rgba(239,68,68,.12); border-color:rgba(239,68,68,.3); }
+        .item-form { display:grid; gap:10px; min-width:360px; }
+        .mini-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+        .mini-btn { display:inline-flex; align-items:center; justify-content:center; padding:10px 12px; border:none; cursor:pointer; background:var(--accent-gradient); color:#fff; font:inherit; font-size:13px; font-weight:500; }
+        .mini-btn.secondary { background:rgba(255,255,255,.04); border:1px solid var(--border-color); }
+        textarea { min-height:72px; resize:vertical; }
+        .meta-block { line-height:1.7; }
+        @media (max-width: 960px) { .header, .main { padding:20px; } .summary-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    </style>
+</head>
+<body>
+    {% with header_back_url='inventory_list' %}
+    {% include 'includes/global_header.html' %}
+    {% endwith %}
+
+    <main class="main">
+        <div class="page-header">
+            <div>
+                <h2>{{ session.title }}</h2>
+                <div class="meta-block meta">
+                    Статус: {{ session.get_status_display }}<br>
+                    Локация: {{ session.location.name|default:"Все локации" }}<br>
+                    Создал: {% if session.created_by %}{{ session.created_by.get_full_name|default:session.created_by.username }}{% else %}-{% endif %}<br>
+                    Начата: {{ session.started_at|date:"d.m.Y H:i"|default:"-" }}{% if session.completed_at %}<br>Завершена: {{ session.completed_at|date:"d.m.Y H:i" }}{% endif %}
+                </div>
+            </div>
+            {% if can_manage_assets and session.status != 'completed' %}
+            <form method="post" action="{% url 'inventory_complete' session.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn warning">Завершить инвентаризацию</button>
+            </form>
+            {% endif %}
+        </div>
+
+        {% if messages %}
+        <div class="message-list">
+            {% for message in messages %}
+            <div class="message-alert{% if message.tags == 'success' %} success{% endif %}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="summary-grid">
+            <div class="summary-card"><span>Всего активов</span><strong>{{ total_count }}</strong></div>
+            <div class="summary-card"><span>Проверено</span><strong>{{ checked_count }}</strong></div>
+            <div class="summary-card"><span>Ожидает проверки</span><strong>{{ pending_count }}</strong></div>
+            <div class="summary-card"><span>Совпадает</span><strong>{{ matched_count }}</strong></div>
+            <div class="summary-card"><span>Расхождения / не найдено</span><strong>{{ mismatch_count|add:missing_count }}</strong></div>
+        </div>
+
+        <div class="toolbar">
+            <form method="get">
+                <select name="result">
+                    <option value="">Все результаты</option>
+                    {% for value, label in result_choices %}
+                    <option value="{{ value }}" {% if selected_result == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn secondary">Поиск</button>
+                <a href="{% url 'inventory_detail' session.id %}" class="btn secondary">Сбросить</a>
+            </form>
+        </div>
+
+        <section class="table-card">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Актив</th>
+                            <th>Ожидалось</th>
+                            <th>Фактически</th>
+                            <th>Результат</th>
+                            <th>Проверка</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr>
+                            <td>
+                                <strong>{{ item.asset.inventory_number }}</strong><br>
+                                {{ item.asset.asset_name|default:"Без названия" }}<br>
+                                <span class="meta">{{ item.asset.asset_type.name|default:"-" }}</span>
+                            </td>
+                            <td class="meta-block">
+                                Сотрудник: {% if item.expected_employee %}{{ item.expected_employee.get_full_name|default:item.expected_employee.username }}{% else %}-{% endif %}<br>
+                                Локация: {{ item.expected_location.name|default:"-" }}<br>
+                                Статус: {{ item.expected_status.name|default:"-" }}
+                            </td>
+                            <td class="meta-block">
+                                Сотрудник: {% if item.actual_employee %}{{ item.actual_employee.get_full_name|default:item.actual_employee.username }}{% else %}-{% endif %}<br>
+                                Локация: {{ item.actual_location.name|default:"-" }}<br>
+                                Статус: {{ item.actual_status.name|default:"-" }}
+                            </td>
+                            <td>
+                                <span class="result-badge {{ item.result }}">{{ item.get_result_display }}</span>
+                                {% if item.comment %}<div class="meta" style="margin-top:8px;">{{ item.comment }}</div>{% endif %}
+                            </td>
+                            <td>
+                                {% if can_manage_assets and session.status != 'completed' %}
+                                <form method="post" class="item-form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="item_id" value="{{ item.id }}">
+                                    <div class="mini-grid">
+                                        <select name="result">
+                                            <option value="{{ matched_value }}" {% if item.result == matched_value %}selected{% endif %}>Совпадает</option>
+                                            <option value="{{ mismatch_value }}" {% if item.result == mismatch_value %}selected{% endif %}>Расхождение</option>
+                                            <option value="{{ missing_value }}" {% if item.result == missing_value %}selected{% endif %}>Не найден</option>
+                                        </select>
+                                        <select name="actual_employee">
+                                            <option value="">Факт. сотрудник</option>
+                                            {% for employee in employees %}
+                                            <option value="{{ employee.id }}" {% if item.actual_employee_id == employee.id %}selected{% endif %}>{{ employee.get_full_name|default:employee.username }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <select name="actual_location">
+                                            <option value="">Факт. локация</option>
+                                            {% for location in locations %}
+                                            <option value="{{ location.id }}" {% if item.actual_location_id == location.id %}selected{% endif %}>{{ location.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <select name="actual_status">
+                                            <option value="">Факт. статус</option>
+                                            {% for status in statuses %}
+                                            <option value="{{ status.id }}" {% if item.actual_status_id == status.id %}selected{% endif %}>{{ status.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <textarea name="comment" placeholder="Комментарий по проверке">{{ item.comment }}</textarea>
+                                    </div>
+                                    <button type="submit" class="mini-btn">Сохранить</button>
+                                </form>
+                                {% else %}
+                                <div class="meta-block meta">
+                                    Проверил: {% if item.checked_by %}{{ item.checked_by.get_full_name|default:item.checked_by.username }}{% else %}-{% endif %}<br>
+                                    Дата: {{ item.checked_at|date:"d.m.Y H:i"|default:"-" }}
+                                </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="empty">Нет строк для выбранного фильтра.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    {% include 'theme_script.html' %}
+</body>
+</html>

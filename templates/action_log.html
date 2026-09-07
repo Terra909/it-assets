@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Журнал действий - IT Assets</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-card-hover: rgba(255, 255, 255, 0.06);
+            --accent-primary: #00d4ff;
+            --accent-secondary: #7c3aed;
+            --accent-gradient: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --text-primary: #f0f0f5;
+            --text-secondary: #8888a0;
+            --border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'IBM Plex Sans', sans-serif; min-height: 100vh; background: var(--bg-primary); color: var(--text-primary); }
+
+        .header {
+            position: sticky; top: 0; z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 50px;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header-left { display: flex; align-items: center; gap: 20px; }
+        .back-btn {
+            display: flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px;
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 10px; color: var(--text-secondary); text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover { background: var(--bg-card-hover); border-color: rgba(0, 212, 255, 0.3); color: var(--accent-primary); }
+        .back-btn svg { width: 20px; height: 20px; fill: currentColor; }
+
+        .logo { display: flex; align-items: center; gap: 15px; }
+        .logo-icon {
+            width: 45px; height: 45px; background: var(--accent-gradient);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+        }
+        .logo-icon svg { width: 24px; height: 24px; fill: white; }
+        .logo h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700;
+            background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; letter-spacing: 1px;
+        }
+
+        .user-info { display: flex; align-items: center; gap: 20px; }
+        .username { color: var(--text-secondary); font-size: 14px; }
+        .username span { color: var(--accent-primary); font-weight: 500; }
+        .logout-btn {
+            display: flex; align-items: center; gap: 8px;
+            padding: 10px 20px;
+            background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444; text-decoration: none; border-radius: 10px;
+            font-size: 13px; font-weight: 500; transition: all 0.3s ease;
+        }
+        .logout-btn:hover { background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.5); transform: translateY(-2px); }
+        .logout-btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+        .main { max-width: 1200px; margin: 0 auto; padding: 60px 50px; }
+
+        .page-title { margin-bottom: 40px; animation: fadeInUp 0.6s ease; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .page-title h2 {
+            font-size: 32px; font-weight: 600; margin-bottom: 12px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .page-title h2::before { content: ''; width: 4px; height: 32px; background: var(--accent-gradient); border-radius: 2px; }
+        .page-title p { color: var(--text-secondary); font-size: 16px; margin-left: 16px; }
+
+        /* Filters */
+        .filters-card {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 16px; padding: 24px; margin-bottom: 30px;
+        }
+        .filters-grid { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+        .filter-group { display: flex; flex-direction: column; gap: 8px; }
+        .filter-group label { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+        .filter-group input, .filter-group select {
+            padding: 10px 12px; background: var(--bg-secondary); border: 1px solid var(--border-color);
+            border-radius: 10px; color: var(--text-primary); font-size: 14px;
+            font-family: 'IBM Plex Sans', sans-serif; min-width: 115px;
+            transition: all 0.3s ease;
+        }
+        .filter-group input:focus, .filter-group select:focus {
+            outline: none; border-color: var(--accent-primary); box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+        .filter-btn {
+            padding: 10px 16px; background: var(--accent-gradient); color: white;
+            border: none; border-radius: 10px; font-size: 14px; font-weight: 500;
+            cursor: pointer; transition: all 0.3s ease; font-family: 'IBM Plex Sans', sans-serif;
+        }
+        .filter-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3); }
+        .clear-btn {
+            padding: 10px 16px; background: var(--bg-card); border: 1px solid var(--border-color);
+            color: var(--text-secondary); border-radius: 10px; font-size: 14px; font-weight: 500;
+            cursor: pointer; transition: all 0.3s ease; font-family: 'IBM Plex Sans', sans-serif;
+            text-decoration: none;
+        }
+        .clear-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+
+        /* Table */
+        .table-card {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 16px; overflow: hidden;
+        }
+        .table-wrapper { overflow-x: auto; }
+        .action-log-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .action-log-table thead { background: rgba(0, 212, 255, 0.05); }
+        .action-log-table th {
+            padding: 16px 20px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+        .action-log-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+        .action-log-table tbody tr { transition: background 0.2s ease; }
+        .action-log-table tbody tr:hover { background: var(--bg-card-hover); }
+        .action-log-table tr:last-child td { border-bottom: none; }
+        .user-cell { font-weight: 500; color: var(--accent-primary); }
+        .time-cell { color: var(--text-secondary); white-space: nowrap; font-size: 13px; }
+
+        .badge {
+            display: inline-block; padding: 4px 10px; border-radius: 20px;
+            font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .badge-login { background: rgba(0, 212, 255, 0.15); color: var(--accent-primary); border: 1px solid rgba(0, 212, 255, 0.3); }
+        .badge-logout { background: rgba(136, 136, 160, 0.15); color: var(--text-secondary); border: 1px solid rgba(136, 136, 160, 0.3); }
+        .badge-asset { background: rgba(124, 58, 237, 0.15); color: #a78bfa; border: 1px solid rgba(124, 58, 237, 0.3); }
+        .badge-employee { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-request { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .badge-report { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+        .empty-message { text-align: center; padding: 60px; color: var(--text-secondary); }
+
+        /* Pagination */
+        .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; padding: 24px; }
+        .pagination a, .pagination span {
+            display: flex; align-items: center; justify-content: center;
+            min-width: 40px; height: 40px; padding: 8px 12px;
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 10px; color: var(--text-secondary); text-decoration: none;
+            font-size: 14px; font-weight: 500; transition: all 0.3s ease;
+        }
+        .pagination a:hover { background: var(--bg-card-hover); border-color: var(--accent-primary); color: var(--accent-primary); }
+        .pagination .current { background: var(--accent-gradient); border-color: transparent; color: white; }
+        .pagination .disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .footer { margin-top: 80px; padding: 30px 50px; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 13px; }
+        .footer span { background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 500; }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+                padding: 16px 18px;
+            }
+
+            .header-left,
+            .user-info {
+                width: 100%;
+                justify-content: space-between;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                gap: 12px;
+            }
+
+            .logo-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .logo h1 {
+                font-size: 16px;
+            }
+
+            .username {
+                width: 100%;
+            }
+
+            .logout-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+    {% include 'theme_head.html' %}
+</head>
+<body>
+    {% with header_back_url='home' %}
+    {% include 'includes/global_header.html' %}
+    {% endwith %}
+
+    <main class="main">
+        <div class="page-title">
+            <h2>Журнал действий</h2>
+            <p>История всех действий пользователей в системе</p>
+        </div>
+
+        <!-- Фильтры -->
+        <div class="filters-card">
+            <form method="get" class="filters-grid">
+                <div class="filter-group">
+                    <label>Тип действия</label>
+                    <select name="action_type">
+                        <option value="">Все действия</option>
+                        {% for value, label in action_types %}
+                        <option value="{{ value }}" {% if selected_action_type == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Пользователь</label>
+                    <select name="user">
+                        <option value="">Все пользователи</option>
+                        {% for u in users %}
+                        <option value="{{ u.id }}" {% if selected_user == u.id|stringformat:"s" %}selected{% endif %}>{{ u.username }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>От даты</label>
+                    <input type="date" name="date_from" value="{{ date_from }}">
+                </div>
+                <div class="filter-group">
+                    <label>До даты</label>
+                    <input type="date" name="date_to" value="{{ date_to }}">
+                </div>
+                <div class="filter-group">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="filter-btn">Фильтровать</button>
+                </div>
+                <div class="filter-group">
+                    <label>&nbsp;</label>
+                    <a href="{% url 'action_log' %}" class="clear-btn">Очистить</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Таблица -->
+        <div class="table-card">
+            <div class="table-wrapper">
+                <table class="action-log-table">
+                    <thead>
+                        <tr>
+                            <th>Время</th>
+                            <th>Пользователь</th>
+                            <th>Действие</th>
+                            <th>Описание</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for action in page_obj %}
+                        <tr>
+                            <td class="time-cell">{{ action.created_at|date:"d.m.Y H:i:s" }}</td>
+                            <td class="user-cell">{{ action.user.username|default:"Система" }}</td>
+                            <td>
+                                {% if action.action_type == 'login' %}
+                                    <span class="badge badge-login">Вход</span>
+                                {% elif action.action_type == 'logout' %}
+                                    <span class="badge badge-logout">Выход</span>
+                                {% elif action.action_type == 'asset_create' %}
+                                    <span class="badge badge-asset">Добавлен актив</span>
+                                {% elif action.action_type == 'asset_edit' %}
+                                    <span class="badge badge-asset">Изменён актив</span>
+                                {% elif action.action_type == 'asset_delete' %}
+                                    <span class="badge badge-asset">Удалён актив</span>
+                                {% elif action.action_type == 'asset_transfer' %}
+                                    <span class="badge badge-asset">Передан актив</span>
+                                {% elif action.action_type == 'employee_create' %}
+                                    <span class="badge badge-employee">Добавлен сотрудник</span>
+                                {% elif action.action_type == 'employee_edit' %}
+                                    <span class="badge badge-employee">Изменён сотрудник</span>
+                                {% elif action.action_type == 'employee_delete' %}
+                                    <span class="badge badge-employee">Удалён сотрудник</span>
+                                {% elif action.action_type == 'request_create' %}
+                                    <span class="badge badge-request">Создан запрос</span>
+                                {% elif action.action_type == 'request_approve' %}
+                                    <span class="badge badge-request">Принят запрос</span>
+                                {% elif action.action_type == 'request_reject' %}
+                                    <span class="badge badge-request">Отклонён запрос</span>
+                                {% elif action.action_type == 'report_create' %}
+                                    <span class="badge badge-report">Создан отчёт</span>
+                                {% else %}
+                                    <span class="badge badge-login">{{ action.action_type }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ action.description|default:"-" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="empty-message">Нет записей в журнале действий</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Пагинация -->
+            {% if page_obj.has_other_pages %}
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1{% if selected_action_type %}&action_type={{ selected_action_type }}{% endif %}{% if selected_user %}&user={{ selected_user }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}">&laquo;</a>
+                    <a href="?page={{ page_obj.previous_page_number }}{% if selected_action_type %}&action_type={{ selected_action_type }}{% endif %}{% if selected_user %}&user={{ selected_user }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}">&lsaquo;</a>
+                {% else %}
+                    <span class="disabled">&laquo;</span>
+                    <span class="disabled">&lsaquo;</span>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <span class="current">{{ num }}</span>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <a href="?page={{ num }}{% if selected_action_type %}&action_type={{ selected_action_type }}{% endif %}{% if selected_user %}&user={{ selected_user }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if selected_action_type %}&action_type={{ selected_action_type }}{% endif %}{% if selected_user %}&user={{ selected_user }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}">&rsaquo;</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}{% if selected_action_type %}&action_type={{ selected_action_type }}{% endif %}{% if selected_user %}&user={{ selected_user }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}">&raquo;</a>
+                {% else %}
+                    <span class="disabled">&rsaquo;</span>
+                    <span class="disabled">&raquo;</span>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    {% include 'theme_script.html' %}
+</body>
+</html>

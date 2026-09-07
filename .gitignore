@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Django / app runtime
+db.sqlite3
+*.log
+*.sqlite3
+staticfiles/
+media/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Test / coverage / cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Django migrations cache? (keep migrations themselves tracked)
+# If you ever need to ignore generated migration artifacts, add rules carefully.
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+
+# IDE local files
+.idea/
+
+# Project-local generated files
+/audit_out.txt

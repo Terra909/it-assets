@@ -1,0 +1,33 @@
+<script>
+    (function () {
+        var storageKey = 'it-assets-theme';
+        var root = document.documentElement;
+
+        function applyTheme(theme) {
+            root.setAttribute('data-theme', theme);
+            document.querySelectorAll('[data-theme-toggle]').forEach(function (button) {
+                var nextThemeLabel = theme === 'light' ? 'тёмную тему' : 'светлую тему';
+                button.setAttribute('aria-label', 'Переключить на ' + nextThemeLabel);
+                button.setAttribute('title', 'Переключить на ' + nextThemeLabel);
+            });
+        }
+
+        try {
+            applyTheme(localStorage.getItem(storageKey) || 'dark');
+        } catch (error) {
+            applyTheme('dark');
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('[data-theme-toggle]').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var nextTheme = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+                    try {
+                        localStorage.setItem(storageKey, nextTheme);
+                    } catch (error) {}
+                    applyTheme(nextTheme);
+                });
+            });
+        });
+    })();
+</script>
