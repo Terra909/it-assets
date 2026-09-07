@@ -108,7 +108,3 @@ Authorization: Bearer <access_token>
 - `type` — тип
 - `status` — статус
 - `employee` — сотрудник
-
-## Про .env
-
-Файл `.env` не надо загружать на GitHub. Для этого есть `.env.example`.
