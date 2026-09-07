@@ -26,7 +26,7 @@
 ### 1. Клонировать репозиторий
 
 ```powershell
-git clone https://github.com/Terra909/IT_assets.git
+git clone https://github.com/Terra909/it_assets.git
 cd IT_assets
 ```
 
