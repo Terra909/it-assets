@@ -27,7 +27,7 @@
 
 ```powershell
 git clone https://github.com/Terra909/it-assets.git
-cd IT_assets
+cd it-assets
 ```
 
 ### 2. Создать виртуальное окружение
